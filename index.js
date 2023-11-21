@@ -57,7 +57,6 @@ app.post('/auth/register', registerValidation, async (req, res) => {
     console.log('ERROR! CANT SAVE USER : ', err),
       res.status(500).json({
         error: "Не удалось зарегистрироваться !",
-        err
       })
   }
 })
@@ -101,7 +100,6 @@ app.post('/auth/login', async (req, res) => {
     console.log('ERROR! CANT LOGIN USER : ', err),
     res.status(500).json({
       error: "Не удалось авторизоваться !",
-      err
     })
   }
 })
