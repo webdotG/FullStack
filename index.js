@@ -8,33 +8,44 @@ import UserModel from "./models/User.js"
 
 mongoose
   .connect('mongodb+srv://webdotg:zxcasdqwe321zxc@first.v5ufhia.mongodb.net/blogbox?retryWrites=true&w=majority')
-  .then(() => console.log('DB CONNECT OK !'))
-  .catch((err) => console.log('DB CONNECT ERROR : ', err))
+  .then(() => console.log('DB CONNECT OK!'))
+  .catch((err) => console.log('DB CONNECT ERROR! : ', err))
 
 const app = express()
 app.use(express.json())                      //для того что бы express приложение понимал json
 
 
 app.post('/auth/register', registerValidation, async (req, res) => {
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) {
-    return res.status(400).json(errors.array())
+
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json(errors.array())
+    }
+    const passwordNoHash = req.body.password
+    const SALT = await BCRYPT.genSalt(10)
+    const passwordHash = await BCRYPT.hash(passwordNoHash, SALT)
+    const document = new UserModel({
+      email: req.body.email,
+      fullName: req.body.fullName,
+      passwordHash,
+      avatarUrl: req.body.avatarUrl
+    })
+    const user = await document.save()
+    res.json({
+      validation: "пройдена",
+      user: "сохранён",
+      user
+    })
+  } catch (err) {
+    console.log('ERROR! CANT SAVE USER : ', err),
+      res.status(500).json({
+        error: "Не удалось зарегистрироваться !",
+        err
+      })
   }
-  const passwordNoHash = req.body.password
-  const SALT = await BCRYPT.genSalt(10)
-  const passwordHash = await BCRYPT.hash(passwordNoHash, SALT)
-  const document = new UserModel({
-    email: req.body.email,
-    fullName: req.body.fullName,
-    passwordHash,
-    avatarUrl: req.body.avatarUrl
-  })
-  const user = await document.save()
-  res.json({
-    "валидация": "пройдена",
-    "юзер": "сохранён",
-    user
-  })
+
+
 })
 
 app.listen(2222, (err) => {
