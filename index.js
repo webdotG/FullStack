@@ -17,7 +17,7 @@ app.use(express.json())                      //для того что бы expre
 
 app.post('/auth/register', registerValidation, async (req, res) => {
   const errors = validationResult(req)
-  if(!errors.isEmpty()) {
+  if (!errors.isEmpty()) {
     return res.status(400).json(errors.array())
   }
 
@@ -28,14 +28,15 @@ app.post('/auth/register', registerValidation, async (req, res) => {
   const document = new UserModel({
     email: req.body.email,
     fullName: req.body.fullName,
-    passwordHash: passwordHash,
+    passwordHash,
     avatarUrl: req.body.avatarUrl
   })
   const user = await document.save()
 
   res.json({
-    success : true,
-    "валидация" : "пройдена",
+    "валидация": "пройдена",
+    "юзер": "сохранён",
+    user
   })
 })
 
@@ -50,7 +51,7 @@ app.listen(2222, (err) => {
 // app.post('/auth/login', (req, res) => {
 //   // console.log("POST /auth/login req.body : ", req.body)
 //   //когда придёт запрос генерю токен и передаю в него инфу .sign() которую буду шифровать
-//   //можно придумать любой ключ для шифровки для примера "secret25"  
+//   //можно придумать любой ключ для шифровки для примера "secret25"
 
 //   if (req.body.email === 'test@test') {
 //     const token = JWT.sign(
