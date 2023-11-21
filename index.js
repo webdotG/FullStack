@@ -16,7 +16,6 @@ app.use(express.json())                      //для того что бы expre
 
 
 app.post('/auth/register', registerValidation, async (req, res) => {
-
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -48,7 +47,6 @@ app.post('/auth/register', registerValidation, async (req, res) => {
 
     const { passwordHash, ...userData } = user._doc
     //вытаскиваю пароль и все данные что бы вернуть всё кроме пароля
-
     res.json({
       "валидация": "пройдена",
       "юзер": "сохранён",
@@ -62,8 +60,50 @@ app.post('/auth/register', registerValidation, async (req, res) => {
         err
       })
   }
+})
 
+app.post('/auth/login', async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ email: req.body.email })
+    if (!user) {
+      return req.status(404).json({
+        "login": "пользователь не найден",
+        message: "пользователь не найден"
+      })
+    }
 
+    const isVaildPass = await BCRYPT.compare(req.body.password, user._doc.passwordHash)
+    if (!isVaildPass) {
+      return req.status(404).json({
+        "pass": "не верный пароль",
+        message: "не верный логин или пароль"
+      })
+    }
+    
+    const TOKEN = JWT.sign(                     //создание Токена (шифрую id)
+      {
+        _id: user._id                           //_id по томоу что в Mongo такой синтаксис
+      },
+      'secret25',                                 // ключ шифрования
+      {
+        expiresIn: '30d'                        //время жизни Токена
+      }
+    )
+
+    const { passwordHash, ...userData } = user._doc
+    //вытаскиваю пароль и все данные что бы вернуть всё кроме пароля
+    res.json({
+      "логин": "выполнен",
+      ...userData,
+      TOKEN
+    })
+  } catch (err) {
+    console.log('ERROR! CANT LOGIN USER : ', err),
+    res.status(500).json({
+      error: "Не удалось авторизоваться !",
+      err
+    })
+  }
 })
 
 app.listen(2222, (err) => {
