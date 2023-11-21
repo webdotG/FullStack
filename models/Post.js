@@ -11,7 +11,7 @@ const PostSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  tegs: {
+  tags: {
     type: Array,
     default: []                              //если теги не указаны то создаётся пустой массив
   },
