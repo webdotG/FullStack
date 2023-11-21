@@ -18,7 +18,7 @@ app.post('/auth/register', registerValidation, UserController.Register)
 app.post('/auth/login', loginValidation, UserController.Login)
 app.get('/auth/me', checkAuth, UserController.GetMe)            //chekAuth самодельный мидлвеар запрос не сработает без неё
 
-// app.get('/posts', PostController.GetAll)
+app.get('/posts', PostController.GetAll)
 // app.get('/posts/:id', PostController.GetOne)
 app.post('/posts', checkAuth, postCreateValidation, PostController.Create)
 // app.delete('/posts', PostController.Remove)
