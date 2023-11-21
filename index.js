@@ -22,21 +22,26 @@ app.post('/auth/register', registerValidation, async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json(errors.array())
     }
+
     const passwordNoHash = req.body.password
     const SALT = await BCRYPT.genSalt(10)
     const passwordHash = await BCRYPT.hash(passwordNoHash, SALT)
+    
     const document = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
       passwordHash,
       avatarUrl: req.body.avatarUrl
     })
+    
     const user = await document.save()
+    
     res.json({
-      validation: "пройдена",
-      user: "сохранён",
+      "валидация": "пройдена",
+      "юзер": "сохранён",
       user
     })
+  
   } catch (err) {
     console.log('ERROR! CANT SAVE USER : ', err),
       res.status(500).json({
