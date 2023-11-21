@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import { validationResult } from 'express-validator'
 import { registerValidation } from './validations/auth.js'    //обязательно указывать расширение .js
 import UserModel from "./models/User.js"
+import checkAuth from './utils/checkAuth.js'
 
 mongoose
   .connect('mongodb+srv://webdotg:zxcasdqwe321zxc@first.v5ufhia.mongodb.net/blogbox?retryWrites=true&w=majority')
@@ -48,15 +49,14 @@ app.post('/auth/register', registerValidation, async (req, res) => {
     const { passwordHash, ...userData } = user._doc
     //вытаскиваю пароль и все данные что бы вернуть всё кроме пароля
     res.json({
-      "валидация": "пройдена",
-      "юзер": "сохранён",
+      message: "юзер сохранён",
       ...userData,
       TOKEN
     })
   } catch (err) {
     console.log('ERROR! CANT SAVE USER : ', err),
       res.status(500).json({
-        error: "Не удалось зарегистрироваться !",
+        message: "Не удалось зарегистрироваться !",
       })
   }
 })
@@ -65,20 +65,18 @@ app.post('/auth/login', async (req, res) => {
   try {
     const user = await UserModel.findOne({ email: req.body.email })
     if (!user) {
-      return req.status(404).json({
-        "login": "пользователь не найден",
+      return res.status(404).json({
         message: "пользователь не найден"
       })
     }
 
     const isVaildPass = await BCRYPT.compare(req.body.password, user._doc.passwordHash)
     if (!isVaildPass) {
-      return req.status(404).json({
-        "pass": "не верный пароль",
+      return res.status(400).json({
         message: "не верный логин или пароль"
       })
     }
-    
+
     const TOKEN = JWT.sign(                     //создание Токена (шифрую id)
       {
         _id: user._id                           //_id по томоу что в Mongo такой синтаксис
@@ -92,14 +90,37 @@ app.post('/auth/login', async (req, res) => {
     const { passwordHash, ...userData } = user._doc
     //вытаскиваю пароль и все данные что бы вернуть всё кроме пароля
     res.json({
-      "логин": "выполнен",
+      message: "логин выполнен",
       ...userData,
       TOKEN
     })
   } catch (err) {
     console.log('ERROR! CANT LOGIN USER : ', err),
+      res.status(500).json({
+        message: "Не удалось авторизоваться !",
+      })
+  }
+})
+
+app.get('/auth/me', checkAuth, async (req, res) => {  //chekAuth самодельный мидлвеар запрос не сработает без неё
+  try {
+    const user = await UserModel.findById(req.userId)
+    if (!user) {
+      return res.status(404).json({
+        message: 'пользователь не найден'
+      })
+    }
+    const { passwordHash, ...userData } = user._doc
+    //вытаскиваю пароль и все данные что бы вернуть всё кроме пароля
+    res.json({
+      message: 'пользователь найден',
+      ...userData,
+    })
+
+  } catch (err) {
+    console.log("GET AUTH/ME ERROR! : ", err )
     res.status(500).json({
-      error: "Не удалось авторизоваться !",
+      message: "Нет доступа"
     })
   }
 })
@@ -110,28 +131,3 @@ app.listen(2222, (err) => {
   }
   console.log("server working")
 })
-
-
-// app.post('/auth/login', (req, res) => {
-//   // console.log("POST /auth/login req.body : ", req.body)
-//   //когда придёт запрос генерю токен и передаю в него инфу .sign() которую буду шифровать
-//   //можно придумать любой ключ для шифровки для примера "secret25"
-
-//   if (req.body.email === 'test@test') {
-//     const token = JWT.sign(
-//       {
-//         email: req.body.email,
-//         fullName: "Кирилл Грант"
-//       },
-//       "secret25"
-//     );
-//   }
-
-//   res.json({
-//     sucsess: true,
-//     token
-//     // https://jwt.io/  token можно расшифровать и посмотреть что пришло
-//     // "res.json" : "можнописать что угодно",
-//   })
-
-// })
