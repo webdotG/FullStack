@@ -20,11 +20,9 @@ app.post('/auth/register', registerValidation, async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json(errors.array())
   }
-
   const passwordNoHash = req.body.password
   const SALT = await BCRYPT.genSalt(10)
   const passwordHash = await BCRYPT.hash(passwordNoHash, SALT)
-
   const document = new UserModel({
     email: req.body.email,
     fullName: req.body.fullName,
@@ -32,7 +30,6 @@ app.post('/auth/register', registerValidation, async (req, res) => {
     avatarUrl: req.body.avatarUrl
   })
   const user = await document.save()
-
   res.json({
     "валидация": "пройдена",
     "юзер": "сохранён",
