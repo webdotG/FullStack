@@ -25,23 +25,36 @@ app.post('/auth/register', registerValidation, async (req, res) => {
 
     const passwordNoHash = req.body.password
     const SALT = await BCRYPT.genSalt(10)
-    const passwordHash = await BCRYPT.hash(passwordNoHash, SALT)
-    
+    const HASH = await BCRYPT.hash(passwordNoHash, SALT)
+
     const document = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
-      passwordHash,
+      passwordHash: HASH,
       avatarUrl: req.body.avatarUrl
     })
-    
+
     const user = await document.save()
-    
+
+    const TOKEN = JWT.sign(                     //создание Токена (шифрую id)
+      {
+        _id: user._id                           //_id по томоу что в Mongo такой синтаксис
+      },
+      'secret25',                                 // ключ шифрования
+      {
+        expiresIn: '30d'                        //время жизни Токена
+      }
+    )
+
+    const { passwordHash, ...userData } = user._doc
+    //вытаскиваю пароль и все данные что бы вернуть всё кроме пароля
+
     res.json({
       "валидация": "пройдена",
       "юзер": "сохранён",
-      user
+      ...userData,
+      TOKEN
     })
-  
   } catch (err) {
     console.log('ERROR! CANT SAVE USER : ', err),
       res.status(500).json({
