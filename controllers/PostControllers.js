@@ -3,7 +3,9 @@ import PostModel from '../models/Post.js'
 export const GetAll = async (req, res) => {
   try {
 
-    const posts = await PostModel.find().populate('user').exec() //.populate('user).exec привязываю юзера к посту
+    const posts = await PostModel.find().populate({ path: "user", select: ["name", "avatar", "fullName"] }).exec() 
+    //.populate('user).exec -- привязываю таблицы а именно  юзера к посту , 
+    //{ path: "user", select: ["name", "avatar"] } -- удаляю хэшПароль из ответа
     res.json(posts)
 
   } catch (err) {
