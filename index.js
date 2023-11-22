@@ -1,12 +1,10 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import multer from 'multer'      // для загрузки картинок
-import checkAuth from './utils/checkAuth.js'
 import { registerValidation, loginValidation } from './validations/auth.js'    //обязательно указывать расширение .js
 import { postCreateValidation } from './validations/post.js'
-import validationErrors from './utils/validationErrors.js'
-import * as UserController from './controllers/UserControllers.js'   //{ GetMe, Login, Register }
-import * as PostController from './controllers/PostControllers.js'
+import { validationErrors, checkAuth } from './utils/index.js'
+import { UserController, PostController } from './controllers/index.js'
 
 
 mongoose
