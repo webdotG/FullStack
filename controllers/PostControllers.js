@@ -69,7 +69,6 @@ export const GetOne = async (req, res) => {
 export const Remove = async (req, res) => {
   try {
     const postId = req.params.id
-
     await PostModel.findByIdAndDelete({
       _id: postId
     })
