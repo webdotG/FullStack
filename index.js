@@ -22,7 +22,7 @@ app.get('/posts', PostController.GetAll)
 app.get('/posts/:id', PostController.GetOne)
 app.post('/posts', checkAuth, postCreateValidation, PostController.Create)
 app.delete('/posts/:id',  checkAuth, PostController.Remove)
-// app.patch('/posts', PostController.Update)
+app.patch('/posts/:id', checkAuth, PostController.Update)
 
 
 app.listen(2222, (err) => {

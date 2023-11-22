@@ -16,7 +16,7 @@ export const Create = async (req, res) => {
   } catch (err) {
     console.log("Ошибка! при создании статьи : ", err)
     res.status(500).json({
-      message: "Не удалось создать статью"
+      message: "Не удалось создать статью ! "
     })
   }
 }
@@ -30,9 +30,9 @@ export const GetAll = async (req, res) => {
     res.json(posts)
 
   } catch (err) {
-    console.log("Не удалось получить все статьи : ", err)
+    console.log("Не удалось получить все статьи ! : ", err)
     res.status(500).json({
-      message: "Не удалось получить все статьи"
+      message: "Не удалось получить все статьи ! "
     })
   }
 }
@@ -59,9 +59,9 @@ export const GetOne = async (req, res) => {
     })
 
   } catch (err) {
-    console.log("Не удалось получить статью : ", err)
+    console.log("Не удалось получить статью ! : ", err)
     res.status(500).json({
-      message: "Не удалось получить статью"
+      message: "Не удалось получить статью ! "
     })
   }
 }
@@ -78,9 +78,39 @@ export const Remove = async (req, res) => {
       "статья": "удалена",
     })
   } catch (err) {
-    console.log("Не удалось удалить статью : ", err)
+    console.log("Не удалось удалить статью ! : ", err)
     res.status(500).json({
-      message: "Не удалось удалить статью"
+      message: "Не удалось удалить статью ! "
+    })
+  }
+}
+
+export const Update = async (req, res) => {
+  try {
+    const postId = req.params.id
+
+    await PostModel.updateOne(
+      { 
+        _id: postId
+      },
+      {
+        title: req.body.title,
+        text: req.body.text,
+        imageUrl: req.body.imageUrl,
+        user: req.userId,
+        tags: req.body.tags
+      },
+    )
+
+    res.json({
+      success: true,
+      "статья" : "обновлена"
+    })
+
+  } catch (err) {
+    console.log("Не удалось обновить статью ! : ", err)
+    res.status(500).json({
+      message: "Не удалось обновить статью ! "
     })
   }
 }
