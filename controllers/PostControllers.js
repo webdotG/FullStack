@@ -70,7 +70,7 @@ export const Remove = async (req, res) => {
   try {
     const postId = req.params.id
 
-    const post = await PostModel.findByIdAndDelete({
+    await PostModel.findByIdAndDelete({
       _id: postId
     })
 
@@ -78,7 +78,6 @@ export const Remove = async (req, res) => {
       success: true,
       "статья": "удалена",
     })
-
   } catch (err) {
     console.log("Не удалось удалить статью : ", err)
     res.status(500).json({
