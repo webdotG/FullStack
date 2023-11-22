@@ -32,9 +32,9 @@ app.get('/auth/me', checkAuth, UserController.GetMe)            //chekAuth са�
 
 app.get('/posts', PostController.GetAll)
 app.get('/posts/:id', PostController.GetOne)
-app.post('/posts', checkAuth, postCreateValidation, validationErrors, PostController.Create)
+app.post('/posts', checkAuth, postCreateValidation,  PostController.Create)
 app.delete('/posts/:id', checkAuth, PostController.Remove)
-app.patch('/posts/:id', checkAuth, postCreateValidation, validationErrors, PostController.Update)
+app.patch('/posts/:id', checkAuth, postCreateValidation,  PostController.Update)
 
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
   res.json({
