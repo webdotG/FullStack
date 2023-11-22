@@ -6,7 +6,6 @@ import { postCreateValidation } from './validations/post.js'
 import { validationErrors, checkAuth } from './utils/index.js'
 import { UserController, PostController } from './controllers/index.js'
 
-
 mongoose
   .connect('mongodb+srv://webdotg:zxcasdqwe321zxc@first.v5ufhia.mongodb.net/blogbox?retryWrites=true&w=majority')
   .then(() => console.log('DB CONNECT OK!'))
