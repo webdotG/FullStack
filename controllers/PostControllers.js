@@ -45,7 +45,6 @@ export const GetOne = async (req, res) => {
     //использую не findById ,а findByIdAndUpdate
     //вторым параметорм после поиска шв я передаю то что хочу обновить $inc: { viewsCount: 1 }
     //третим параметором говорю что нужно вернуть после обновления уже обновленный документ
-
     const post = await PostModel.findByIdAndUpdate({
       _id: postId
     }, {
@@ -54,12 +53,36 @@ export const GetOne = async (req, res) => {
       returnDocument: 'after'
     },)
 
-    res.json(post)
+    res.json({
+      "статья": "создана",
+      post
+    })
 
   } catch (err) {
     console.log("Не удалось получить статью : ", err)
     res.status(500).json({
       message: "Не удалось получить статью"
+    })
+  }
+}
+
+export const Remove = async (req, res) => {
+  try {
+    const postId = req.params.id
+
+    const post = await PostModel.findByIdAndDelete({
+      _id: postId
+    })
+
+    res.json({
+      success: true,
+      "статья": "удалена",
+    })
+
+  } catch (err) {
+    console.log("Не удалось удалить статью : ", err)
+    res.status(500).json({
+      message: "Не удалось удалить статью"
     })
   }
 }

@@ -21,7 +21,7 @@ app.get('/auth/me', checkAuth, UserController.GetMe)            //chekAuth са�
 app.get('/posts', PostController.GetAll)
 app.get('/posts/:id', PostController.GetOne)
 app.post('/posts', checkAuth, postCreateValidation, PostController.Create)
-// app.delete('/posts', PostController.Remove)
+app.delete('/posts/:id',  checkAuth, PostController.Remove)
 // app.patch('/posts', PostController.Update)
 
 
